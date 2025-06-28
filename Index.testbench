@@ -1,0 +1,66 @@
+// Code your testbench here
+`timescale 1ns / 1ps
+
+module tb_sync_ram;
+
+    // Parameters
+    parameter DATA_WIDTH = 8;
+    parameter ADDR_WIDTH = 4;
+
+    // Signals
+    reg clk;
+    reg we;
+    reg [ADDR_WIDTH-1:0] addr;
+    reg [DATA_WIDTH-1:0] din;
+    wire [DATA_WIDTH-1:0] dout;
+
+    // Instantiate the sync_ram module
+    sync_ram #(DATA_WIDTH, ADDR_WIDTH) uut (
+        .clk(clk),
+        .we(we),
+        .addr(addr),
+        .din(din),
+        .dout(dout)
+    );
+
+    // Clock generation: 10ns period
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+    // Main stimulus
+    initial begin
+        // Start VCD dump
+        $dumpfile("sync_ram_tb.vcd");     // Name of the VCD file
+        $dumpvars(0, tb_sync_ram);        // Dump all variables in this module
+
+        $display("Starting RAM test...");
+        $monitor("Time=%0t | we=%b | addr=%0d | din=%h | dout=%h", $time, we, addr, din, dout);
+
+        // Reset-like behavior
+        we = 0; addr = 0; din = 0;
+
+        // Wait before starting
+        #12;
+
+        // === Write Operations ===
+        @(posedge clk); we = 1; addr = 4; din = 8'hA5;
+        @(posedge clk); addr = 7; din = 8'h3C;
+        @(posedge clk); addr = 2; din = 8'h7F;
+        @(posedge clk); addr = 15; din = 8'h01;
+
+        // === Read Operations ===
+        @(posedge clk); we = 0; addr = 4;
+        @(posedge clk); addr = 7;
+        @(posedge clk); addr = 2;
+        @(posedge clk); addr = 15;
+        @(posedge clk); addr = 0;
+
+        // Wait and finish
+        #20;
+        $display("Test completed.");
+        $finish;
+    end
+
+endmodule
