@@ -55,3 +55,5 @@ Correct timing of data input and output.
 Synchronous updates of dout one cycle after address is set (due to clocked behavior).
 
 Conclusion The synchronous RAM module performed as expected. It successfully handled read and write operations on the clock edge, making it suitable for integration into digital systems like CPUs or FPGAs. The design is clean, reusable, and can be extended for more advanced features such as reset, dual-port operation, or memory initialization from files. This project reinforces key concepts of synchronous design, memory control, and Verilog simulation techniques.
+#output
+![Image](https://github.com/user-attachments/assets/d30c213e-f1b0-49be-a0f3-7b5e2b04499d)
